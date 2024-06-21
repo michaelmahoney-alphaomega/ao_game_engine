@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <stdio.h>
 //#include <stdlib.h>
+#include <SDL.h> // SDL system for windows/input handling and graphics threading.
 
 static int FRAME_RATE = 60;
 
@@ -40,6 +41,36 @@ void motion(position *x, velocity *v, acceleration *a)
 {
 }
 
+void display_bmp(char *file_name)
+{
+    SDL_Surface *image;
+
+    /* Load the BMP file into a surface */
+    image = SDL_LoadBMP(file_name);
+    if (image == NULL) {
+        fprintf(stderr, "Couldn't load %s: %s\n", file_name, SDL_GetError());
+        return;
+    }
+
+    /*
+     * Palettized screen modes will have a default palette (a standard
+     * 8*8*4 colour cube), but if the image is palettized as well we can
+     * use that palette for a nicer colour matching
+     */
+    if (image->format->palette && screen->format->palette) {
+    SDL_SetColors(screen, image->format->palette->colors, 0,
+                  image->format->palette->ncolors);
+    }
+
+    /* Blit onto the screen surface */
+    if(SDL_BlitSurface(image, NULL, screen, NULL) < 0)
+        fprintf(stderr, "BlitSurface error: %s\n", SDL_GetError());
+
+    SDL_UpdateRect(screen, 0, 0, image->w, image->h);
+
+    /* Free the allocated BMP surface */
+    SDL_FreeSurface(image);
+}
 
 int main()
 {   
@@ -51,12 +82,23 @@ int main()
 	}
 
 
-    // HINSTANCE hDll = LoadLibrary(TEXT("sdl2/SDL2.dll"));
-    //if (hDll == NULL)
-    //{
-      //  fprintf(fptr, "Failed to load SDL2.dll\n");
-       // return 1;
-    //}
+    HINSTANCE hDll = LoadLibrary(TEXT("sdl2/SDL2.dll"));
+    if (hDll == NULL)
+    {
+		fprintf(fptr, "Failed to load SDL2.dll\n");
+		return 1;
+    }
+
+	fprintf(fptr, "INFO: Initializing SDL2\n.")
+
+	if((SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO)) == -1)
+	{
+		fprintf(fptr, "INFO: Could not initialize SDL. | DEBUG: %s\n", SDL_GetError());
+		return 1;
+	}
+
+	fprintf(fptr, "INFO: SDL initialized.\n");
+
 
 	position x0 = {1,1,1};
 	velocity v0 = {1,1,1};
@@ -84,14 +126,16 @@ int main()
 	fprintf(fptr, "current velocity: %f %f %f\n", v0[0], v0[1], v0[2]);
 	fprintf(fptr, "current acceleration: %f %f %f\n", a0[0], a0[1], a0[2]);
 
-
-
+	display_bmp("test.png");
 
 	// clean up
+	fprintf(fptr, "INFO: Cleaning up pointers, libs, SDL")
+		
 	ptr_x0 = NULL;
 	ptr_v0 = NULL;
 	ptr_a0 = NULL;
 	
+	SDL_Quit();
 	fclose(fptr);
 	
 	// end program
