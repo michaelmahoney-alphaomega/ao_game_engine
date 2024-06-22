@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <stdio.h>
-//#include <stdlib.h>
+#include <stdlib.h>
+#include "defs.h"
 
 static int FRAME_RATE = 60;
 
@@ -42,7 +43,7 @@ void motion(position *x, velocity *v, acceleration *a)
 
 
 
-int main()
+int main(int argc, char *argv[])
 {   
 	FILE *fptr = fopen("main.log", "a");
 	if (fptr == NULL)
@@ -50,24 +51,6 @@ int main()
 		perror("Failed to open main.log file.");
 		return 1;
 	}
-
-
-    HINSTANCE hDll = LoadLibrary(TEXT("sdl2/SDL2.dll"));
-    if (hDll == NULL)
-    {
-		fprintf(fptr, "Failed to load SDL2.dll\n");
-		return 1;
-    }
-
-	fprintf(fptr, "INFO: Initializing SDL2\n.")
-
-	if((SDL_Init(SDL_INIT_VIDEO|SDL_INIT_AUDIO)) == -1)
-	{
-		fprintf(fptr, "INFO: Could not initialize SDL. | DEBUG: %s\n", SDL_GetError());
-		return 1;
-	}
-
-	fprintf(fptr, "INFO: SDL initialized.\n");
 
 
 	position x0 = {1,1,1};
@@ -96,16 +79,25 @@ int main()
 	fprintf(fptr, "current velocity: %f %f %f\n", v0[0], v0[1], v0[2]);
 	fprintf(fptr, "current acceleration: %f %f %f\n", a0[0], a0[1], a0[2]);
 
-	display_bmp("test.png");
-
 	// clean up
-	fprintf(fptr, "INFO: Cleaning up pointers, libs, SDL")
-		
+	fprintf(fptr, "INFO: Cleaning up pointers, libs, SDL");
+	
 	ptr_x0 = NULL;
 	ptr_v0 = NULL;
 	ptr_a0 = NULL;
 	
-	SDL_Quit();
+	///////////// BEGIN SDL /////////////
+	memset(&app, 0, sizeof(App));
+	init_sdl();
+	atexit(cleanup);
+	while(1)
+	{
+		prepare_scene();
+		do_input();
+		present_scene();
+		SDL_Delay(16);
+	}
+	///////////// END SDL //////////////
 	fclose(fptr);
 	
 	// end program
