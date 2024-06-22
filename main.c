@@ -1,7 +1,6 @@
 #include <windows.h>
 #include <stdio.h>
 //#include <stdlib.h>
-#include <SDL.h> // SDL system for windows/input handling and graphics threading.
 
 static int FRAME_RATE = 60;
 
