@@ -1,10 +1,14 @@
-#include <windows.h>
+//stdlib imports
 #include <stdio.h>
 #include <stdlib.h>
-#include "defs.h"
+
+//third party imports
+#include <SDL.h>
+
+//local imports
+//#include "init.c"
 
 static int FRAME_RATE = 60;
-
 typedef double position[3];
 typedef double velocity[3];
 typedef double acceleration[3];
@@ -87,16 +91,11 @@ int main(int argc, char *argv[])
 	ptr_a0 = NULL;
 	
 	///////////// BEGIN SDL /////////////
-	memset(&app, 0, sizeof(App));
-	init_sdl();
-	atexit(cleanup);
-	while(1)
-	{
-		prepare_scene();
-		do_input();
-		present_scene();
-		SDL_Delay(16);
-	}
+	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_Quit();
+	//while(1)
+	//{
+	//}
 	///////////// END SDL //////////////
 	fclose(fptr);
 	

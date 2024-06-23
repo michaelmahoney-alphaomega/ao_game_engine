@@ -1,9 +1,7 @@
 void init_sdl(void)
 {
     int rendererFlags, windowFlags;
-
     rendererFlags = SDL_RENDERER_ACCELERATED;
-
     windowFlags = 0;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -12,7 +10,7 @@ void init_sdl(void)
         exit(1);
     }
 
-    app.window = SDL_CreateWindow
+    window = SDL_CreateWindow
 	(
 		"Shooter 01",
 		SDL_WINDOWPOS_UNDEFINED, 
@@ -22,7 +20,7 @@ void init_sdl(void)
 		windowFlags
 	);
 
-    if (!app.window)
+    if (window)
     {
         printf
 		(
@@ -35,10 +33,9 @@ void init_sdl(void)
     }
 
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+    renderer = SDL_CreateRenderer(window, -1, rendererFlags);
 
-    app.renderer = SDL_CreateRenderer(app.window, -1, rendererFlags);
-
-    if (!app.renderer)
+    if (renderer)
     {
         printf("Failed to create renderer: %s\n", SDL_GetError());
         exit(1);
