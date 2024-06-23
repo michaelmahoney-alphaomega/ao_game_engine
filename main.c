@@ -61,9 +61,9 @@ int main(int argc, char *argv[])
 	velocity v0 = {1,1,1};
 	acceleration a0 = {1,1,1};
 
-	fprintf(fptr, "current position: x = %f y = %f z = %f\n", x0[0], x0[1], x0[2]);
-	fprintf(fptr, "current velocity: x = %f y = %f z = %f\n", v0[0], v0[1], v0[2]);
-	fprintf(fptr, "current acceleration: x = %f y = %f z = %f\n", a0[0], a0[1], a0[2]);
+	//fprintf(fptr, "current position: x = %f y = %f z = %f\n", x0[0], x0[1], x0[2]);
+	////fprintf(fptr, "current velocity: x = %f y = %f z = %f\n", v0[0], v0[1], v0[2]);
+	//fprintf(fptr, "current acceleration: x = %f y = %f z = %f\n", a0[0], a0[1], a0[2]);
 
 
 	double (*ptr_x0)[3];
@@ -79,19 +79,64 @@ int main(int argc, char *argv[])
 	update_velocity(ptr_v0, ptr_a0);
 	update_position(ptr_x0, ptr_v0);
 
-	fprintf(fptr, "current position: %f %f %f\n", x0[0], x0[1], x0[2]);
-	fprintf(fptr, "current velocity: %f %f %f\n", v0[0], v0[1], v0[2]);
-	fprintf(fptr, "current acceleration: %f %f %f\n", a0[0], a0[1], a0[2]);
+	//fprintf(fptr, "current position: %f %f %f\n", x0[0], x0[1], x0[2]);
+	//fprintf(fptr, "current velocity: %f %f %f\n", v0[0], v0[1], v0[2]);
+	//fprintf(fptr, "current acceleration: %f %f %f\n", a0[0], a0[1], a0[2]);
 
 	// clean up
-	fprintf(fptr, "INFO: Cleaning up pointers, libs, SDL");
+	fprintf(fptr, "INFO: Cleaning up pointers, libs, SDL\n");
 	
 	ptr_x0 = NULL;
 	ptr_v0 = NULL;
 	ptr_a0 = NULL;
 	
 	///////////// BEGIN SDL /////////////
-	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_Window *window = NULL;
+	SDL_Surface *window_surface = NULL;
+	SDL_Surface *image_surface = NULL;
+
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	{
+		fprintf(fptr, "ERROR: Failed to initialize SDL_Video: %f\n", SDL_GetError());
+	}
+	else
+	{
+		window = SDL_CreateWindow
+		(
+			"ao_game_engine",
+			SDL_WINDOWPOS_CENTERED,
+			SDL_WINDOWPOS_CENTERED, 
+			640,
+			480,
+			SDL_WINDOW_SHOWN
+		);
+
+		if(window == NULL) { fprintf(fptr, "ERROR: Failed to initialize SDL_Window: %f\n", SDL_GetError());}
+
+		else
+		{
+			window_surface = SDL_GetWindowSurface(window);
+			image_surface = SDL_LoadBMP("./test.bmp");
+
+			if (image_surface == NULL) { fprintf(fptr, "ERROR: Failed to load image: %f\n", SDL_GetError()); }
+
+			else
+			{
+				SDL_BlitSurface(image_surface, NULL, window_surface, NULL);
+				SDL_UpdateWindowSurface(window);
+				SDL_Delay(2000);
+			}
+		}
+	}
+	SDL_FreeSurface(image_surface);
+	image_surface = NULL;
+
+	SDL_FreeSurface(window_surface);
+	window_surface = NULL;
+
+	SDL_DestroyWindow(window);
+	window = NULL;
+
 	SDL_Quit();
 	//while(1)
 	//{
