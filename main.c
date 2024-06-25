@@ -1,9 +1,10 @@
 //stdlib imports
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 //third party imports
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 //local imports
 //#include "init.c"
@@ -20,7 +21,6 @@ static size_t acc_len = sizeof(acceleration)/sizeof(double);
 void update_acceleration (acceleration *a) // need to define the input change to acceleration
 {
 }
-
 
 void update_velocity(velocity *v, acceleration *a)
 {
@@ -47,7 +47,7 @@ void motion(position *x, velocity *v, acceleration *a)
 
 
 
-int main(int argc, char *argv[])
+int main(int argc, char **args)
 {   
 	FILE *fptr = fopen("main.log", "a");
 	if (fptr == NULL)
@@ -95,53 +95,54 @@ int main(int argc, char *argv[])
 	SDL_Surface *window_surface = NULL;
 	SDL_Surface *image_surface = NULL;
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
-	{
-		fprintf(fptr, "ERROR: Failed to initialize SDL_Video: %f\n", SDL_GetError());
-	}
-	else
-	{
-		window = SDL_CreateWindow
-		(
-			"ao_game_engine",
-			SDL_WINDOWPOS_CENTERED,
-			SDL_WINDOWPOS_CENTERED, 
-			640,
-			480,
-			SDL_WINDOW_SHOWN
-		);
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) { fprintf(fptr, "ERROR: Failed to initialize SDL_Video: %f\n", SDL_GetError()); exit(1);}
 
-		if(window == NULL) { fprintf(fptr, "ERROR: Failed to initialize SDL_Window: %f\n", SDL_GetError());}
+	bool running = true;
+	SDL_Event event;
 
-		else
+	while (running)
+	{
+		window = SDL_CreateWindow ("ao_game_engine", 640, 480, SDL_EVENT_WINDOW_SHOWN);
+
+		if(window == NULL) 
 		{
-			window_surface = SDL_GetWindowSurface(window);
-			image_surface = SDL_LoadBMP("./test.bmp");
+			fprintf(fptr, "ERROR: Failed to initialize SDL_Window: %f\n", SDL_GetError()); 
+			exit(1);
+		}
 
-			if (image_surface == NULL) { fprintf(fptr, "ERROR: Failed to load image: %f\n", SDL_GetError()); }
-
-			else
+		while (SDL_PollEvent(&event) != 0)
+		{
+			if (event.type == SDL_EVENT_QUIT)
 			{
-				SDL_BlitSurface(image_surface, NULL, window_surface, NULL);
-				SDL_UpdateWindowSurface(window);
-				SDL_Delay(2000);
+				running = false;
 			}
 		}
+
+			
+		window_surface = SDL_GetWindowSurface(window);
+		image_surface = SDL_LoadBMP("./test.bmp");
+
+		if (image_surface == NULL) { fprintf(fptr, "ERROR: Failed to load image: %f\n", SDL_GetError()); exit(1); }
+
+		//SDL_BlitSurface(image_surface, NULL, window_surface, NULL);
+		//SDL_UpdateWindowSurface(window);
+		//SDL_Delay(2000);
+				
+		SDL_DestroySurface(image_surface);
+		image_surface = NULL;
+
+		SDL_DestroySurface(window_surface);
+		window_surface = NULL;
+
+		SDL_DestroyWindow(window);
+		window = NULL;
+
 	}
-	SDL_FreeSurface(image_surface);
-	image_surface = NULL;
-
-	SDL_FreeSurface(window_surface);
-	window_surface = NULL;
-
-	SDL_DestroyWindow(window);
-	window = NULL;
-
+	
 	SDL_Quit();
-	//while(1)
-	//{
-	//}
 	///////////// END SDL //////////////
+	
+	//close log function
 	fclose(fptr);
 	
 	// end program
