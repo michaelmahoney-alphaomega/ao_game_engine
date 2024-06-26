@@ -98,14 +98,11 @@ int main(int argc, char *argv[])
 	///////////////////////
 	
 	SDL_Window *window = NULL;
-
-
 	// Init SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) 
 	{ 
 		fprintf(fptr, "ERROR: Failed to initialize SDL_Video: %f\n", SDL_GetError()); 
 	}
-
 	window = SDL_CreateWindow
 	(
 		 "AO_GAME_ENGINE",
@@ -115,51 +112,37 @@ int main(int argc, char *argv[])
 		 480, 
 		 SDL_WINDOW_SHOWN
 	 );
-
 	if(window == NULL);	 
 	{
 		fprintf(fptr, "ERROR: FAILED TO INITIALIZE SDL_Window: %f\n", SDL_GetError()); 
 	}
-
 	bool running = true;
 	SDL_Event event;
-		//SDL_SURFACE *WINDOW_SURFACE = NULL;
-	//SDL_SURFACE *IMAGE_SURFACE = NULL;
-
+	SDL_Surface *window_surface = NULL;
+	SDL_Surface *image_surface = NULL;
 	// CREATE WINDOW
-	
 	while(running)
 	{
 		// Loop through Events
 		while (SDL_PollEvent(&event) != 0) 
 		{
-			
 			if (event.type == SDL_QUIT) // close the window if user clicks exit. Check this first. 
-				running = false;
-				
-		//window_surface = SDL_GetWindowSurface(window);
-		//mage_surface = SDL_LoadBMP("./test.bmp");
-
-		//if (image_surface == NULL) 
-		//{ 
-	//		fprintf(fptr, "ERROR: Failed to load image: %f\n", SDL_GetError()); 
-	//		running = false;
-	//		break;
-	//	}
-
-		//SDL_BlitSurface(image_surface, NULL, window_surface, NULL);
-
-		//SDL_Delay(1000);
+			running = false;
 		}
+		window_surface = SDL_GetWindowSurface(window);
+		image_surface = SDL_LoadBMP("test.bmp");
+		if (image_surface == NULL) 
+		{ 
+			fprintf(fptr, "ERROR: Failed to load image: %f\n", SDL_GetError()); 
+			running = false;
+		}
+		SDL_BlitSurface(image_surface, NULL, window_surface, NULL);
 		SDL_UpdateWindowSurface(window);
 	}
-
-//		SDL_DestroySurface(image_surface);
-//		image_surface = NULL;
-//
-//		SDL_DestroySurface(window_surface);
-//		window_surface = NULL;
-//
+	SDL_FreeSurface(image_surface);
+	image_surface = NULL;
+	SDL_FreeSurface(window_surface);
+	window_surface = NULL;
 	SDL_DestroyWindow(window);
 	window = NULL;
 
