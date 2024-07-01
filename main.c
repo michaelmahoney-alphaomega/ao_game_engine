@@ -5,45 +5,9 @@
 //third party imports
 #include <SDL2/SDL.h>
 
-//local imports
-//#include "init.c"
-
-static int FRAME_RATE = 60;
-typedef double position[3];
-typedef double velocity[3];
-typedef double acceleration[3];
-
-static size_t pos_len = sizeof(position)/sizeof(double);
-static size_t vel_len = sizeof(velocity)/sizeof(double);
-static size_t acc_len = sizeof(acceleration)/sizeof(double);
-
-void update_acceleration (acceleration *a) // need to define the input change to acceleration
-{
-}
-
-void update_velocity(velocity *v, acceleration *a)
-{
-	for (int i = 0; i < vel_len; i++)
-	{
-		double v_new = (*v)[i] + (*a)[i] * 1.0/FRAME_RATE;
-		(*v)[i] = v_new;
-	}
-}
-
-
-void update_position(position *x, velocity  *v) 
-{
-	for (int i = 0; i < pos_len; i++)
-	{
-		double x_new = (*x)[i] + (*v)[i] * 1.0/FRAME_RATE; 
-		(*x)[i] = x_new;
-	}
-}
-
-void motion(position *x, velocity *v, acceleration *a)
-{
-}
-
+// local imports
+#include "./ao_physics.c"
+//#include "init
 
 ////////////////////////////////////////////
 // BEGIN MAIN
@@ -58,51 +22,14 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-
-	position x0 = {1,1,1};
-	velocity v0 = {1,1,1};
-	acceleration a0 = {1,1,1};
-
-	//fprintf(fptr, "current position: x = %f y = %f z = %f\n", x0[0], x0[1], x0[2]);
-	////fprintf(fptr, "current velocity: x = %f y = %f z = %f\n", v0[0], v0[1], v0[2]);
-	//fprintf(fptr, "current acceleration: x = %f y = %f z = %f\n", a0[0], a0[1], a0[2]);
-
-
-	double (*ptr_x0)[3];
-	ptr_x0 = &x0;
-
-	double (*ptr_v0)[3];
-	ptr_v0 = &v0;
-
-	double (*ptr_a0)[3];
-	ptr_a0 = &a0;
-	
-	update_acceleration(ptr_a0);
-	update_velocity(ptr_v0, ptr_a0);
-	update_position(ptr_x0, ptr_v0);
-
-	//fprintf(fptr, "current position: %f %f %f\n", x0[0], x0[1], x0[2]);
-	//fprintf(fptr, "current velocity: %f %f %f\n", v0[0], v0[1], v0[2]);
-	//fprintf(fptr, "current acceleration: %f %f %f\n", a0[0], a0[1], a0[2]);
-
-	// clean up
-	fprintf(fptr, "INFO: Cleaning up pointers, libs, SDL\n");
-	
-	ptr_x0 = NULL;
-	ptr_v0 = NULL;
-	ptr_a0 = NULL;
-
-
-	///////////////////////
-	// Main runtime loop
-	///////////////////////
-	
-	SDL_Window *window = NULL;
 	// Init SDL
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) 
 	{ 
 		fprintf(fptr, "ERROR: Failed to initialize SDL_Video: %f\n", SDL_GetError()); 
 	}
+
+	SDL_Window *window = NULL;
+	
 	window = SDL_CreateWindow
 	(
 		 "AO_GAME_ENGINE",
@@ -112,15 +39,20 @@ int main(int argc, char *argv[])
 		 480, 
 		 SDL_WINDOW_SHOWN
 	 );
+
 	if(window == NULL);	 
 	{
 		fprintf(fptr, "ERROR: FAILED TO INITIALIZE SDL_Window: %f\n", SDL_GetError()); 
 	}
+
 	bool running = true;
 	SDL_Event event;
 	SDL_Surface *window_surface = NULL;
 	SDL_Surface *image_surface = NULL;
-	// CREATE WINDOW
+
+	////////////////////
+	/// MAIN LOOP
+	////////////////////
 	while(running)
 	{
 		// Loop through Events
@@ -129,28 +61,32 @@ int main(int argc, char *argv[])
 			if (event.type == SDL_QUIT) // close the window if user clicks exit. Check this first. 
 			running = false;
 		}
+
 		window_surface = SDL_GetWindowSurface(window);
 		image_surface = SDL_LoadBMP("test.bmp");
+		
 		if (image_surface == NULL) 
 		{ 
 			fprintf(fptr, "ERROR: Failed to load image: %f\n", SDL_GetError()); 
 			running = false;
 		}
+		
 		SDL_BlitSurface(image_surface, NULL, window_surface, NULL);
 		SDL_UpdateWindowSurface(window);
 	}
+
+	// CLEAN UP
 	SDL_FreeSurface(image_surface);
 	image_surface = NULL;
+	
 	SDL_FreeSurface(window_surface);
 	window_surface = NULL;
+	
 	SDL_DestroyWindow(window);
 	window = NULL;
 
 	SDL_Quit();
-	///////////// END SDL //////////////
 	
-	//close log function
 	fclose(fptr);
-	// end program
 	return 0;
 }
