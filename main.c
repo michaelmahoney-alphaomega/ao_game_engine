@@ -6,7 +6,7 @@
 #include <SDL2/SDL.h>
 
 // local imports
-#include "./ao_physics.c"
+#include "ao_math.h"
 //#include "init
 
 ////////////////////////////////////////////
@@ -88,5 +88,17 @@ int main(int argc, char *argv[])
 	SDL_Quit();
 	
 	fclose(fptr);
-	return 0;
+
+	vector v = {1,1,1};
+	vector w = {5,5,5};
+	vector u = {0,0,0};
+	vector  *u_ptr = &u;
+	vector_add(v,w,u_ptr);
+
+
+
+
+
+	u_ptr = NULL;
+	return 0;	
 }
