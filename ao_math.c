@@ -1,5 +1,10 @@
-#include "ao_math.h"
-#include <stdio.h>
+
+
+bool vector_equal(vector v, vector u)
+{
+	if ((v[0] == u[0]) & (v[1] == u[1]) & (v[2] == u[2])) {return 1;}
+	else {return 0;}
+
 void vector_add(vector v, vector w, vector* u_ptr)
 {
 	*u_ptr[0] = v[0] + w[0];
