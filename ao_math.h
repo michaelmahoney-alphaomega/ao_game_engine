@@ -1,5 +1,6 @@
 #ifndef AO_MATH_H_
 #define AO_MATH_H_
+#include <stdbool.h>
 typedef double vector[3];
 typedef double scalar;
 bool vector_equal(vector v, vector u);
