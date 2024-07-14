@@ -12,12 +12,10 @@ void vector_add_test(char* ptr_buff, size_t buff_size)
 	vector answer2 = {5,7,9};
 	vector answer1 = {0,0,0};
 	// assign vector addition to pointer
-	vector* ptr_answer1 = &answer1;
-	vector_add(v1, v2, ptr_answer1);
+	vector_add(v1, v2, answer1);
 	//check the vectors are equal
-	
 	bool test = vector_equal(answer2, answer1);
-	if (test == 1)
+	if (test == 0)
 	{
 		snprintf(ptr_buff, buff_size, "FAIL: v1: {%f, %f, %f} != v2: {%f, %f, %f}\n", answer2[0], answer2[1], answer2[2] , answer1[0], answer1[1],answer1[2]);
 	}
@@ -36,11 +34,10 @@ void vector_diff_test(char* ptr_buff, size_t buff_size)
 	vector answer2 = {-3,-3,-3};
 	vector answer1;
 	// assign vector addition to pointer
-	vector* ptr_answer1 = &answer1;
-	vector_diff(v1, v2, ptr_answer1);
+	vector_diff(v1, v2, answer1);
 	//check the vectors are equal
 	bool test = vector_equal(answer2, answer1);
-	if (test == 1)
+	if (test == 0)
 	{
 		snprintf(ptr_buff, buff_size, "FAIL: v1: {%f, %f, %f} != v2: {%f, %f, %f}\n", answer2[0], answer2[1], answer2[2] , answer1[0], answer1[1],answer1[2]);
 	}
@@ -84,11 +81,10 @@ void vector_scalar_product_test(char* ptr_buff, size_t buff_size)
 	vector answer2 = {12, 24, 36};
 	vector answer1;
 	// assign vector addition to pointer
-	vector* ptr_answer1 = &answer1;
-	vector_scalar_product(v, s, ptr_answer1);
+	vector_scalar_product(v, s, answer1);
 	//check the vectors are equal
 	bool test = vector_equal(answer2, answer1);
-	if (test == 1)
+	if (test == 0)
 	{
 		snprintf(ptr_buff, buff_size, "FAIL: v1: {%f, %f, %f} != v2: {%f, %f, %f}\n", answer2[0], answer2[1], answer2[2] , answer1[0], answer1[1],answer1[2]);
 	}

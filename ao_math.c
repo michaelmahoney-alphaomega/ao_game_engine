@@ -14,19 +14,19 @@ bool scalar_equal(scalar a, scalar b, scalar epsilon)
 	else {return 0;}
 }
 
-void vector_add(vector v, vector w, vector* u_ptr)
+void vector_add(vector v, vector w, vector u)
 {
-	*u_ptr[0] = v[0] + w[0];
-	*u_ptr[1] = v[1] + w[1];
-	*u_ptr[2] = v[2] + w[2];
+	u[0] = v[0] + w[0];
+	u[1] = v[1] + w[1];
+	u[2] = v[2] + w[2];
 }
 
-void vector_diff(vector v, vector w, vector* u_ptr)
+void vector_diff(vector v, vector w, vector u)
 {
 	// v - w 
-	*u_ptr[0] = v[0] - w[0];
-	*u_ptr[1] = v[1] - w[1];
-	*u_ptr[2] = v[2] - w[2];
+	u[0] = v[0] - w[0];
+	u[1] = v[1] - w[1];
+	u[2] = v[2] - w[2];
 }
 
 void vector_dot_product(vector v, vector w, scalar* s_ptr)
@@ -34,26 +34,27 @@ void vector_dot_product(vector v, vector w, scalar* s_ptr)
 	*s_ptr = (v[0] * w[0]) + (v[1] * w[1]) + (v[2] * w[2]);
 }
 
-void vector_scalar_product( vector v, scalar s, vector* u_ptr)
+void vector_scalar_product( vector v, scalar s, vector u)
 {
-	*u_ptr[0] = s * v[0];
-	*u_ptr[1] = s * v[1];
-	*u_ptr[2] = s * v[2];
+	u[0] = s * v[0];
+	u[1] = s * v[1];
+	u[2] = s * v[2];
 }
 
-//void vector_projection (vector v, vector w, vector* u_ptr)
-//{
-//	scalar s1 = 0;
-//	scalar s2 = 0;
-//	scalar* s1_ptr = &s1;
-//	scalar* s2_ptr = &s2;
-//
-//	dot_product(v,w, s1_ptr);
-//	dot_product(v,v, s2_ptr);
-//	
-//	scalar s = s1/s2;
-//	scalar_product(v, s, u_ptr);
-//	
-//	s1_ptr = NULL;
-//	s2_ptr = NULL;
-//}
+void vector_projection (vector v, vector w, vector u) // project w onto v
+{
+	// Create locals
+	scalar s1;
+	scalar s2;
+	scalar* s1_ptr = &s1;
+	scalar* s2_ptr = &s2;
+	// scale w to v
+	vector_dot_product(v,w, s1_ptr);
+	vector_dot_product(v,v, s2_ptr);
+	// align vectors
+	scalar s = s1/s2;
+	vector_scalar_product(v, s, u);
+	// clean up
+	s1_ptr = NULL;
+	s2_ptr = NULL;
+}
